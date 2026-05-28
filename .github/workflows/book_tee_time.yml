@@ -63,12 +63,6 @@ jobs:
           # Credentials (stored as repository secrets)
           MARINE_PARK_EMAIL: ${{ secrets.MARINE_PARK_EMAIL }}
           MARINE_PARK_PASSWORD: ${{ secrets.MARINE_PARK_PASSWORD }}
-          # Payment (stored as repository secrets)
-          PAYMENT_CARD_NUMBER: ${{ secrets.PAYMENT_CARD_NUMBER }}
-          PAYMENT_CARD_EXPIRY: ${{ secrets.PAYMENT_CARD_EXPIRY }}
-          PAYMENT_CARD_CVV: ${{ secrets.PAYMENT_CARD_CVV }}
-          PAYMENT_CARD_ZIP: ${{ secrets.PAYMENT_CARD_ZIP }}
-          PAYMENT_CARD_NAME: ${{ secrets.PAYMENT_CARD_NAME }}
           # Notifications
           NOTIFY_EMAIL: ${{ vars.NOTIFY_EMAIL }}
           SMTP_FROM: ${{ secrets.SMTP_FROM }}
