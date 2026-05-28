@@ -1,0 +1,93 @@
+name: Book Tee Time
+
+on:
+  # Runs at midnight ET every day.
+  # EDT (summer): midnight ET = 04:00 UTC
+  # EST (winter): midnight ET = 05:00 UTC
+  # Both schedules fire; the second run will find no new slots and exit cleanly.
+  schedule:
+    - cron: '0 4 * * *'
+    - cron: '0 5 * * *'
+
+  # Manual trigger for testing and ad-hoc bookings
+  workflow_dispatch:
+    inputs:
+      course:
+        description: 'Course key (e.g. marine_park)'
+        required: false
+        default: ''
+      target_date:
+        description: 'Target date YYYY-MM-DD (leave blank for today + days_ahead)'
+        required: false
+        default: ''
+      dry_run:
+        description: 'Dry run (true/false) — log times without booking'
+        required: false
+        default: 'false'
+      headed:
+        description: 'Run headed browser for debugging (true/false)'
+        required: false
+        default: 'false'
+
+jobs:
+  book:
+    name: Book tee time
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install chromium --with-deps
+
+      - name: Run booking bot
+        env:
+          # Course selection
+          COURSE: ${{ inputs.course || vars.COURSE || 'marine_park' }}
+          TARGET_DATE: ${{ inputs.target_date || vars.TARGET_DATE || '' }}
+          PLAYERS: ${{ vars.PLAYERS || '2' }}
+          EARLIEST_TIME: ${{ vars.EARLIEST_TIME || '07:00' }}
+          LATEST_TIME: ${{ vars.LATEST_TIME || '09:00' }}
+          DRY_RUN: ${{ inputs.dry_run || vars.DRY_RUN || 'false' }}
+          # Credentials (stored as repository secrets)
+          MARINE_PARK_EMAIL: ${{ secrets.MARINE_PARK_EMAIL }}
+          MARINE_PARK_PASSWORD: ${{ secrets.MARINE_PARK_PASSWORD }}
+          # Payment (stored as repository secrets)
+          PAYMENT_CARD_NUMBER: ${{ secrets.PAYMENT_CARD_NUMBER }}
+          PAYMENT_CARD_EXPIRY: ${{ secrets.PAYMENT_CARD_EXPIRY }}
+          PAYMENT_CARD_CVV: ${{ secrets.PAYMENT_CARD_CVV }}
+          PAYMENT_CARD_ZIP: ${{ secrets.PAYMENT_CARD_ZIP }}
+          PAYMENT_CARD_NAME: ${{ secrets.PAYMENT_CARD_NAME }}
+          # Notifications
+          NOTIFY_EMAIL: ${{ vars.NOTIFY_EMAIL }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          SMTP_HOST: ${{ vars.SMTP_HOST || 'smtp.gmail.com' }}
+        run: python -m booker.main ${{ inputs.headed == 'true' && '--headed' || '' }}
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots-${{ github.run_id }}
+          path: screenshots/
+          retention-days: 7
+
+      - name: Upload log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tee-bot-log-${{ github.run_id }}
+          path: tee_bot.log
+          retention-days: 7

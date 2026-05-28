@@ -1,0 +1,21 @@
+defaults:
+  course: "marine_park"
+  players: 2
+
+  # Preferred tee time window (24-hour HH:MM format)
+  preferred_window:
+    earliest: "07:00"
+    latest: "09:00"
+
+  # Fallback windows tried in order if the preferred window has no availability
+  fallback_windows:
+    - earliest: "09:00"
+      latest: "11:00"
+    - earliest: "06:00"
+      latest: "07:00"
+
+  # Book this many days from today (Marine Park releases slots 7 days out)
+  days_ahead: 7
+
+  # Set true to log available times without completing the booking
+  dry_run: false

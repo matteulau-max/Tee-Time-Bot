@@ -1,0 +1,33 @@
+courses:
+  marine_park:
+    name: "Marine Park Golf Course"
+    booking_url: "https://marineparkridepp.ezlinksgolf.com/index.html#!/search"
+    requires_login: true
+    credentials:
+      email_env: "MARINE_PARK_EMAIL"
+      password_env: "MARINE_PARK_PASSWORD"
+    payment:
+      card_number_env: "PAYMENT_CARD_NUMBER"
+      card_expiry_env: "PAYMENT_CARD_EXPIRY"
+      card_cvv_env: "PAYMENT_CARD_CVV"
+      card_zip_env: "PAYMENT_CARD_ZIP"
+      card_name_env: "PAYMENT_CARD_NAME"
+    # Override any EZLinks default selectors here if the site customizes them.
+    # Leave empty to use the built-in EZLinks selector set.
+    selectors: {}
+
+  # --- Template for adding a new EZLinks course ---
+  # example_course:
+  #   name: "Example Golf Course"
+  #   booking_url: "https://examplecourse.ezlinksgolf.com/index.html#!/search"
+  #   requires_login: true
+  #   credentials:
+  #     email_env: "EXAMPLE_EMAIL"
+  #     password_env: "EXAMPLE_PASSWORD"
+  #   payment:
+  #     card_number_env: "PAYMENT_CARD_NUMBER"
+  #     card_expiry_env: "PAYMENT_CARD_EXPIRY"
+  #     card_cvv_env: "PAYMENT_CARD_CVV"
+  #     card_zip_env: "PAYMENT_CARD_ZIP"
+  #     card_name_env: "PAYMENT_CARD_NAME"
+  #   selectors: {}
