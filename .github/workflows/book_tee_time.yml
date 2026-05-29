@@ -4,7 +4,7 @@ on:
   # Runs at midnight ET every day.
   # EDT (summer): midnight ET = 04:00 UTC
   # EST (winter): midnight ET = 05:00 UTC
-  # Both schedules fire; the second run will find no new slots and exit cleanly.
+  # Both schedules fire; the second run will find no slots and exit cleanly.
   schedule:
     - cron: '0 4 * * *'
     - cron: '0 5 * * *'
@@ -32,7 +32,10 @@ on:
 jobs:
   book:
     name: Book tee time
-    runs-on: ubuntu-latest
+    # Self-hosted runner on your local machine uses your home IP,
+    # which is required to reach EZLinks (cloud IPs are blocked).
+    # Setup instructions: see README → Self-hosted runner setup.
+    runs-on: self-hosted
     timeout-minutes: 15
 
     steps:
@@ -49,6 +52,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install Playwright browsers
+        # --with-deps installs system libs on Linux; safe to run on macOS too
         run: playwright install chromium --with-deps
 
       - name: Run booking bot

@@ -42,7 +42,34 @@ python -m booker.main --dry-run
 
 This runs the full Playwright flow but stops before clicking "Book". It logs all available tee times and saves screenshots to `screenshots/`.
 
-### 4. Configure GitHub Actions
+### 4. Set up a self-hosted runner
+
+EZLinks blocks all cloud/datacenter IPs. GitHub's hosted runners use Azure IPs
+and will be blocked too. A **self-hosted runner** runs the workflow on your own
+machine using your home IP.
+
+> Your machine needs to be on and the runner service running at midnight for the
+> cron to fire. Put your laptop on a charger and disable sleep, or leave a
+> desktop on overnight.
+
+**One-time setup (≈5 minutes):**
+
+1. Go to your GitHub repo → **Settings → Actions → Runners → New self-hosted runner**
+2. Choose your OS (macOS or Linux) and follow the download/configure steps shown — they look like:
+   ```bash
+   mkdir actions-runner && cd actions-runner
+   # Download the runner package (GitHub shows the exact URL for your OS)
+   curl -o actions-runner.tar.gz -L https://github.com/actions/runner/releases/download/...
+   tar xzf actions-runner.tar.gz
+   ./config.sh --url https://github.com/matteulau-max/Tee-Time-Bot --token YOUR_TOKEN
+   ```
+3. Install it as a **background service** so it starts on boot and wakes for scheduled runs:
+   ```bash
+   # macOS / Linux
+   sudo ./svc.sh install
+   sudo ./svc.sh start
+   ```
+4. Verify it's online: GitHub repo → **Settings → Actions → Runners** — you should see your machine listed as **Idle**.
 
 Add the following **Secrets** and **Variables** to your repository
 (`Settings → Secrets and variables → Actions`):
@@ -73,7 +100,7 @@ Add the following **Secrets** and **Variables** to your repository
 | `SMTP_HOST` | `smtp.gmail.com` | SMTP server |
 | `DRY_RUN` | `false` | Set `true` to disable actual booking |
 
-### 5. Manual trigger
+### 6. Manual trigger
 
 Go to **Actions → Book Tee Time → Run workflow** to trigger manually with optional overrides for course, date, and dry-run mode.
 
