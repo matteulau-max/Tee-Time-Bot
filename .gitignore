@@ -11,3 +11,4 @@ __pycache__/
 # Runtime artifacts
 tee_bot.log
 screenshots/
+selector_dump.json
